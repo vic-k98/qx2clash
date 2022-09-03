@@ -1,33 +1,43 @@
+'use strict'
+
 const Koa = require('koa');
-const Router = require('./src/router/index');
 const KoaBoy = require('koa-body');
-const KoaCors = require('koa-cors');
+const staticCache = require('koa-static-cache');
+const cors = require('koa2-cors');
+const helmet = require("koa-helmet");
 
-// config
-const PORT = 3000;
+const config = require('./config');
+const publicRouter = require('./routes/public');
+const privateRouter = require('./routes/private');
+const { loggerMiddleware } = require('./middlewares/logger')
+const { errorHandler, responseHandler } = require('./middlewares/response');
+const { corsHandler } = require('./middlewares/cors');
 
-// init
 const app = new Koa();
 
-app.use(KoaCors());
+// Logger
+app.use(loggerMiddleware);
+
+// Error Handler
+app.use(errorHandler);
+
+// Global Middlewares
 app.use(KoaBoy({ multipart: true }));
+app.use(staticCache(config.publicDir));
 
-// 路由配置
-app.use(Router.routes());
+// Helmet
+app.use(helmet());
 
-// 404 500
-app.use(async (ctx, next) => {
-  try {
-    await next();
-    ctx.body = 'Page not found';
-  } catch (err) {
-    ctx.body = 'Internal Server Error';
-  }
-});
+// Cors
+app.use(cors(corsHandler))
 
-// 路由配置
-app.use(Router.routes());
+// Routes
+app.use(publicRouter.routes());
+app.use(publicRouter.allowedMethods());
+app.use(privateRouter.routes());
+app.use(privateRouter.allowedMethods());
 
-app.listen(PORT, () => {
-  console.log('Server running at http://127.0.0.1:' + PORT + '...');
-});
+// Response
+app.use(responseHandler);
+
+module.exports = app;

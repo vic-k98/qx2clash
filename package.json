@@ -4,25 +4,28 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "node ./src/test.js",
-    "dev": "supervisor ./app.js",
-    "app": "node ./app.js"
+    "start": "node ./bin/www",
+    "dev": "pm2 start ecosystem.config.js --env dev",
+    "test": "pm2 start ecosystem.config.js --env test",
+    "pro": "pm2 start ecosystem.config.js --env pro",
+    "logs": "pm2 logs",
+    "stop": "pm2 stop ecosystem.config.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "https": "^1.0.0",
-    "ini": "^3.0.1",
-    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-body": "^5.0.0",
-    "koa-cors": "0.0.16",
-    "koa-icefire-upload": "^1.4.0",
+    "koa-helmet": "^6.1.0",
+    "koa-jwt": "^4.0.3",
     "koa-router": "^12.0.0",
-    "node-fetch": "^2.6.7",
-    "node-yaml": "^4.0.1"
+    "koa-static-cache": "^5.1.4",
+    "koa2-cors": "^2.0.6",
+    "log4js": "^6.6.1"
   },
   "devDependencies": {
+    "pm2": "^5.2.0",
     "supervisor": "^0.12.0"
   }
 }

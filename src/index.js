@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { localSubUrl } = require('../config');
+const { localSubUrl } = require('./config');
 const transformation = require('./transformation');
 const generateIni = require('./generateIni');
 const cmake = require('./cmake');
