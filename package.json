@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "sup": "supervisor ./bin/www",
     "start": "node ./bin/www",
     "dev": "pm2 start ecosystem.config.js --env dev",
     "test": "pm2 start ecosystem.config.js --env test",
@@ -14,15 +15,20 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "http": "0.0.1-security",
+    "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-body": "^5.0.0",
     "koa-helmet": "^6.1.0",
     "koa-jwt": "^4.0.3",
     "koa-router": "^12.0.0",
+    "koa-static": "^5.0.0",
     "koa-static-cache": "^5.1.4",
     "koa2-cors": "^2.0.6",
-    "log4js": "^6.6.1"
+    "log4js": "^6.6.1",
+    "node-fetch": "^2.6.7",
+    "redis": "^4.3.0"
   },
   "devDependencies": {
     "pm2": "^5.2.0",

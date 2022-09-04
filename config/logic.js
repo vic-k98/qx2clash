@@ -1,23 +1,29 @@
+const path = require('path');
+const config = require('./index');
+
 /**
  * 生成规则配置
  */
 const rulesReplacePrefix = 'http://192.168.31.99:5500/ios_rule_script/';
 const ruleReplaceReg = /^(.+)rule\/QuantumultX(.+)$/;
 
-// const localSubUrl = 'http://192.168.31.99:3000/clash/local-sub.yaml';
-
 /**
- * 生成订阅链接默认配置
+ * 配置文件
  */
-const subUrlOption = {
-  subBackend: 'http://192.168.31.99:25500/sub',
-  clientType: 'clash&new_name=true',
-  remoteConfig: 'http://192.168.31.99:3000/temp/quantumult.conf',
-  excludeRemarks: '剩余|过期|官网|官方|更新|到期'
- }
+const fileNameQx = '/quantumultX.conf'
+const fileNameClash = '/clashConfig.ini';
+const fileNameYaml = '/sub.yaml';
+const filePathQx = path.join(config.staticDir, fileNameQx);
+const filePathClash = path.join(config.staticDir, fileNameClash);
+const filePathYaml = path.join(config.staticDir, fileNameYaml);
 
 module.exports = {
   rulesReplacePrefix,
   ruleReplaceReg,
-  subUrlOption
+  fileNameQx,
+  fileNameClash,
+  fileNameYaml,
+  filePathQx,
+  filePathClash,
+  filePathYaml
 }

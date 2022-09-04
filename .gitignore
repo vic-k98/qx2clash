@@ -3,6 +3,8 @@ node_modules
 /dist
 /logs
 
+/public/static/temp
+
 # local env files
 .env.local
 .env.*.local

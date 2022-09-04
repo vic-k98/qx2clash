@@ -2,6 +2,7 @@
 
 const Koa = require('koa');
 const KoaBoy = require('koa-body');
+const KoaStatic = require('koa-static');
 const staticCache = require('koa-static-cache');
 const cors = require('koa2-cors');
 const helmet = require("koa-helmet");
@@ -24,6 +25,7 @@ app.use(errorHandler);
 
 // Global Middlewares
 app.use(KoaBoy({ multipart: true }));
+app.use(KoaStatic(config.staticDir));
 app.use(staticCache(config.publicDir));
 
 // Helmet

@@ -5,7 +5,8 @@ const path = require('path');
 module.exports = {
   port: '3000',
   secret: 'secret',
-  publicDir: path.resolve(__dirname, '../public'),
+  staticDir: path.resolve(__dirname, '../public/static'),
+  publicDir: path.resolve(__dirname, '../public/cache'),
   logPath: path.resolve(__dirname, '../logs/koa-template.log'),
   mongoDB: {
     database: 'mall',
