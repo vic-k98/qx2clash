@@ -1,12 +1,12 @@
 'use strict'
 
 const fs = require('fs');
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = require('node-fetch');
 
 const logicConf = require('../config/logic');
 const transformation = require('../lib/transformation');
 const generateIni = require('../lib/generateIni');
-// const fetch = require('../lib/fetch');
+const { CodedError } = require('../lib/error');
 
 const make = {};
 
@@ -37,13 +37,15 @@ make.generate = async (ctx, next) => {
 make.subyaml = async (ctx, next) => {
   const { sublink } = ctx.request.body;
 
-  // const response = await fetch(sublink);
-  // console.log(response);
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 5000)
-  })
+  const response = await fetch(sublink);
+
+  if (response.status === 200) {
+    const result = await response['buffer']();
+    // 写入到本地文件
+    fs.writeFileSync(logicConf.filePathYaml, result);
+  } else {
+    throw new CodedError('订阅服务错误', response.status);
+  }
 
   // 返回订阅链接
   ctx.result = {
