@@ -37,8 +37,13 @@ make.generate = async (ctx, next) => {
 make.subyaml = async (ctx, next) => {
   const { sublink } = ctx.request.body;
 
-  const response = await fetch(sublink);
-  console.log(response);
+  // const response = await fetch(sublink);
+  // console.log(response);
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 5000)
+  })
 
   // 返回订阅链接
   ctx.result = {

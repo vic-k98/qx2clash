@@ -3,7 +3,9 @@ node_modules
 /dist
 /logs
 
-/public/static/temp
+/public/static/clashConfig.ini
+/public/static/quantumultX.conf
+/public/static/local-sub.yaml
 
 # local env files
 .env.local
