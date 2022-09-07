@@ -11,6 +11,9 @@ router.prefix('/api');
 // 文件上传
 router.post('/upload', controllers.upload.upload);
 
+// 同步远程规则到本地服务
+router.post('/sync/rules', controllers.upload.syncRules);
+
 // 生成 clash 远程配置文件
 router.post('/generate', controllers.make.generate);
 

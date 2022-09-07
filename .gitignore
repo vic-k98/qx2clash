@@ -6,6 +6,7 @@ node_modules
 /public/static/clashConfig.ini
 /public/static/quantumultX.conf
 /public/static/sub.yaml
+/public/static/rules/*.list
 
 # local env files
 .env.local

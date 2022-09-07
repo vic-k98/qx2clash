@@ -10,6 +10,7 @@ const fileNameYaml = '/sub.yaml';
 const filePathQx = path.join(config.staticDir, fileNameQx);
 const filePathClash = path.join(config.staticDir, fileNameClash);
 const filePathYaml = path.join(config.staticDir, fileNameYaml);
+const fileDirRules = path.join(config.staticDir, 'rules')
 
 module.exports = {
   fileNameQx,
@@ -17,5 +18,6 @@ module.exports = {
   fileNameYaml,
   filePathQx,
   filePathClash,
-  filePathYaml
+  filePathYaml,
+  fileDirRules
 }
