@@ -11,6 +11,16 @@ const { CodedError } = require('../lib/error');
 const make = {};
 
 make.generate = async (ctx, next) => {
+  const body = ctx.request.body;
+
+  // 过滤非法数据
+  let replaceRules = body.replaceRules;
+  replaceRules = replaceRules.filter(item => {
+    if (item.prefix && item.reg && item.middle) {
+      return item
+    }
+  });
+
   // 读取临时配置缓存文件
   const quantumultConf = fs.readFileSync(logicConf.filePathQx, 'utf-8');
   const quantumultConfConten = quantumultConf.toString();
@@ -19,7 +29,7 @@ make.generate = async (ctx, next) => {
   const confiObj = transformation({ content: quantumultConfConten });
 
   // 生成 clash 格式的配置文件
-  const clashConf = generateIni(confiObj);
+  const clashConf = generateIni(confiObj, { replaceRules: replaceRules });
   // 写入到静态文件
   fs.writeFileSync(logicConf.filePathClash, clashConf);
 
@@ -29,7 +39,8 @@ make.generate = async (ctx, next) => {
   // 返回订阅链接
   ctx.result = {
     url: logicConf.fileNameClash,
-    serverList: serverRemote
+    serverList: serverRemote,
+    filterList: replaceRules
   };
   return next();
 }
