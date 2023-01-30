@@ -6,7 +6,8 @@ const controllers = require('../controllers');
 const router = new Router();
 router.prefix('/api');
 
-// router.post('/login', controllers.login.login);
+// 登录接口
+router.post('/login', controllers.login.login);
 
 // 文件上传
 router.post('/upload', controllers.upload.upload);

@@ -3,9 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 const log4js = require('log4js');
-const config = require('../config');
+const dirConf = require('../config').direcotry;
 
-const logsDir = path.parse(config.logPath).dir;
+const logFilePath = dirConf.logFilePath;
+
+const logsDir = path.parse(logFilePath).dir;
 if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir);
 }
@@ -13,7 +15,7 @@ if (!fs.existsSync(logsDir)) {
 log4js.configure({
   appenders: {
     console: { type: 'console' },
-    dateFile: { type: 'dateFile', filename: config.logPath, pattern: '-yyyy-MM-dd' }
+    dateFile: { type: 'dateFile', filename: logFilePath, pattern: '-yyyy-MM-dd', keepFileExt: true }
   },
   categories: {
     default: {

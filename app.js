@@ -7,9 +7,9 @@ const staticCache = require('koa-static-cache');
 const cors = require('koa2-cors');
 const helmet = require("koa-helmet");
 
-const config = require('./config');
 const publicRouter = require('./routes/public');
 const privateRouter = require('./routes/private');
+const dirConf = require('./config').direcotry;
 
 const { loggerMiddleware } = require('./middlewares/logger')
 const { errorHandler, responseHandler } = require('./middlewares/response');
@@ -25,8 +25,8 @@ app.use(errorHandler);
 
 // Global Middlewares
 app.use(KoaBoy({ multipart: true }));
-app.use(KoaStatic(config.staticDir));
-app.use(staticCache(config.publicDir));
+app.use(KoaStatic(dirConf.static));
+app.use(staticCache(dirConf.cache));
 
 // Helmet
 app.use(helmet());
