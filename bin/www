@@ -6,13 +6,13 @@
 
 const app = require('../app');
 const http = require('http');
-const config = require('../config');
+const constConf = require('../config').const;
 
 /**
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || config.port);
+const port = normalizePort(process.env.PORT || constConf.G_APP_PORT);
 // app.set('port', port);
 
 /**

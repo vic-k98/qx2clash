@@ -28,7 +28,7 @@
     "koa2-cors": "^2.0.6",
     "log4js": "^6.6.1",
     "node-fetch": "^2.6.7",
-    "redis": "^4.3.0"
+    "redis": "^4.6.4"
   },
   "devDependencies": {
     "pm2": "^5.2.0",

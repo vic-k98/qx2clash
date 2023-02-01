@@ -3,23 +3,30 @@
 const fs = require('fs');
 const fetch = require('node-fetch');
 
-const { logger } = require('../middlewares/logger')
-const logicConf = require('../config/logic');
+const Redis = require('../lib/redis');
+const { logger } = require('../middlewares/logger');
+const constConf = require('../config').const;
+
+const G_APP_NAME = constConf.G_APP_NAME;
+const G_REDIS_EXPRIRES_UPLAOD = 60 * 60; // 1 小时
+const G_REDIS_EXPRIRES_SYNC_RULES = 60; // 1 年 60 * 60 * 24 * 30 * 12
+const G_REDIS_KEY_PREFIX_UPLAOD = `${G_APP_NAME}_upload`;
+const G_REDIS_KEY_PREFIX_SYNC_RULES = `${G_APP_NAME}_sync_rules`;
 
 const upload = {};
 
 upload.upload = async (ctx, next) => {
   const file = ctx.request.files.file;
+  const fileName = file.newFilename;
+  const redisKey = `${G_REDIS_KEY_PREFIX_UPLAOD}_${fileName}`
 
-  // 接收读出流
-  const reader = fs.createReadStream(file.filepath);
-  // 创建写入流
-  const stream = fs.createWriteStream(logicConf.filePathQx);
-  // 用管道将读出流 "倒给" 输入流
-  reader.pipe(stream);
+  const fileStr = fs.readFileSync(file.filepath, 'utf-8').toString();
+  const setRes = await Redis.set(redisKey, fileStr, G_REDIS_EXPRIRES_UPLAOD);
+  logger.info(`api/upload => set redis result: ${redisKey} - ${setRes};`);
 
   ctx.result = {
-    url: logicConf.fileNameQx
+    key: redisKey,
+    tips: `文件缓存有效期1小时`
   };
   return next();
 }
@@ -27,25 +34,26 @@ upload.upload = async (ctx, next) => {
 upload.syncRules = async (ctx, next) => {
   const { rulesList } = ctx.request.body;
 
-  const list = []
   rulesList.forEach(async item => {
-    logger.info(`开始请求 url: ${item}`);
+    logger.info(`api/syncRules => 开始同步 url: ${item}`);
+
     const itemArr = item.split('/');
     const name = itemArr.pop();
     const dir = itemArr.pop();
-    logger.info(`dir: ${dir}, file: ${name}`);
-
+    logger.info(`api/syncRules => dir: ${dir}, file: ${name}`);
+    
     const response = await fetch(item);
     if (response.status === 200) {
+      logger.info(`api/syncRules => 请求成功, 开始写入缓存`);
       const result = await response['buffer']();
-      logger.info(`请求成功, 开始写入文件`);
-      // 写入到本地文件
-      fs.writeFileSync(`${logicConf.fileDirRules}/${name}`, result);
-      logger.info(`写入文件完成`);
+      const resStr = result.toString();
+      const redisKey = `${G_REDIS_KEY_PREFIX_SYNC_RULES}_${name}`
+      const setRes = await Redis.set(redisKey, resStr, G_REDIS_EXPRIRES_SYNC_RULES);
+      logger.info(`api/syncRules => set redis result: ${redisKey} - ${setRes};`);
     } else {
-      logger.info(`请求异常, url: ${item}, status: ${response.status}`);
+      logger.info(`api/syncRules => 请求异常, url: ${item}, status: ${response.status}`);
     }
-    logger.info(`请求结束 url: ${item}`);
+    logger.info(`api/syncRules => 同步完成 url: ${item}`);
   });
 
   ctx.result = {};

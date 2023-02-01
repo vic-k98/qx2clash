@@ -3,7 +3,7 @@
 const fs = require('fs');
 const fetch = require('node-fetch');
 
-const logicConf = require('../config/logic');
+const logicConf = require('../config').logic;
 const transformation = require('../lib/transformation');
 const generateIni = require('../lib/generateIni');
 const { CodedError } = require('../lib/error');

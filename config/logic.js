@@ -1,16 +1,17 @@
 const path = require('path');
-const dirConf = require('./index').direcotry;
+const direcotry = require('./direcotry');
 
 /**
  * 配置文件
  */
-const fileNameQx = '/quantumultX.conf'
+const fileNameQx = '/quantumultX.conf';
 const fileNameClash = '/clashConfig.ini';
 const fileNameYaml = '/sub.yaml';
-const filePathQx = path.join(dirConf.static, fileNameQx);
-const filePathClash = path.join(dirConf.static, fileNameClash);
-const filePathYaml = path.join(dirConf.static, fileNameYaml);
-const fileDirRules = path.join(dirConf.static, 'rules')
+
+const filePathQx = path.join(direcotry.static, fileNameQx);
+const filePathClash = path.join(direcotry.static, fileNameClash);
+const filePathYaml = path.join(direcotry.static, fileNameYaml);
+const fileDirRules = path.join(direcotry.static, 'rules')
 
 module.exports = {
   fileNameQx,
