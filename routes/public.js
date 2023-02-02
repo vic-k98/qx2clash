@@ -18,8 +18,8 @@ router.post('/sync/rules', controllers.upload.syncRules);
 router.get('/query', controllers.query.query);
 
 // 生成 clash 远程配置文件
-// router.post('/generate', controllers.make.generate);
-// // 生成 yaml 缓存文件
-// router.post('/subyaml', controllers.make.subyaml);
+router.post('/generate', controllers.make.generate);
+// 生成 yaml 缓存文件
+router.post('/subyaml', controllers.make.subyaml);
 
 module.exports = router;

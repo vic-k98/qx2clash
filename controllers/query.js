@@ -13,7 +13,7 @@ query.query = async (ctx, next) => {
   }
 
   // 查询缓存
-  const result = await Redis.get(key);  
+  const result = await Redis.get(key);
   if (!result) {
     ctx.result = '';
     ctx.msg = '查询无数据';
