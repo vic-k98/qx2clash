@@ -15,7 +15,7 @@ if (!fs.existsSync(logsDir)) {
 log4js.configure({
   appenders: {
     console: { type: 'console' },
-    dateFile: { type: 'dateFile', filename: logFilePath, pattern: '-yyyy-MM-dd', keepFileExt: true }
+    dateFile: { type: 'dateFile', filename: logFilePath, pattern: 'yyyy-MM-dd', keepFileExt: true }
   },
   categories: {
     default: {

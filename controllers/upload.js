@@ -5,13 +5,14 @@ const fetch = require('node-fetch');
 
 const Redis = require('../lib/redis');
 const { logger } = require('../middlewares/logger');
-const constConf = require('../config').const;
+const redisConf = require('../config').redis;
 
-const G_APP_NAME = constConf.G_APP_NAME;
-const G_REDIS_EXPRIRES_UPLAOD = 60 * 60; // 1 小时
-const G_REDIS_EXPRIRES_SYNC_RULES = 60; // 1 年 60 * 60 * 24 * 30 * 12
-const G_REDIS_KEY_PREFIX_UPLAOD = `${G_APP_NAME}_upload`;
-const G_REDIS_KEY_PREFIX_SYNC_RULES = `${G_APP_NAME}_sync_rules`;
+const {
+  G_REDIS_EXPRIRES_UPLAOD,
+  G_REDIS_EXPRIRES_SYNC_RULES,
+  G_REDIS_KEY_PREFIX_UPLAOD,
+  G_REDIS_KEY_PREFIX_SYNC_RULES
+} = redisConf;
 
 const upload = {};
 
