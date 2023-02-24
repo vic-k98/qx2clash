@@ -1,6 +1,8 @@
 'use strict'
 
 const fetch = require('node-fetch');
+const fs = require('fs');
+const path = require('path');
 
 const { logger } = require('../middlewares/logger');
 const transformation = require('../lib/transformation');
@@ -9,6 +11,7 @@ const { CodedError } = require('../lib/error');
 const { InvalidQueryError } = require('../lib/error');
 const Redis = require('../lib/redis');
 const redisConf = require('../config').redis;
+const dirConf = require('../config').direcotry;
 
 const {
   G_REDIS_EXPRIRES_GENERATE_CLASH,
@@ -92,6 +95,33 @@ make.subyaml = async (ctx, next) => {
     throw new CodedError('订阅服务错误', response.status);
   }
 
+  return next();
+}
+
+// 生成 clash ini 配置文件
+make.clashini = async (ctx, next) => {
+  const { key } = ctx.request.body;
+
+  if (!key) {
+    throw new InvalidQueryError();
+  }
+
+  // 查询缓存
+  const result = await Redis.get(key);
+
+  if (!result) {
+    throw new InvalidQueryError();
+  }
+
+  const clashIniFile = path.join(dirConf.static, '/clashConfig.ini');
+
+  // 写入到静态文件
+  fs.writeFileSync(clashIniFile, result);
+
+
+  ctx.result = {
+    url: '/clashConfig.ini'
+  };
   return next();
 }
 

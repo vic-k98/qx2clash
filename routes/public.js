@@ -21,5 +21,7 @@ router.get('/query', controllers.query.query);
 router.post('/generate', controllers.make.generate);
 // 生成 yaml 缓存文件
 router.post('/subyaml', controllers.make.subyaml);
+// 生成 clash ini 配置文件
+router.post('/clashini', controllers.make.clashini);
 
 module.exports = router;
