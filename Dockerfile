@@ -1,5 +1,5 @@
 # ---- Dependencies ----
-FROM node:12-alpine AS dependencies
+FROM node:14-alpine AS dependencies
 WORKDIR /app
 COPY package.json ./
 RUN npm install
