@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    /* 页面样式 */
+    .row {
+      margin-bottom: 50px;
+    }
+    .title {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <p class="title">文件上传：</p>
+    <input id="uploadSelect" type="file" />
+    <button id="uploadBtn">上传</button>
+    <p>
+      上传状态：
+      <span id="uploadStatus"></span>
+    </p>
+  </div>
+
+  <div class="row">
+    <p class="title">转化 qx 配置：</p>
+    <input id="transformKey" type="text" style="width: 400px">
+    <button id="transformBtn">一键转换</button>
+    <p>
+      转换状态：
+      <span id="transformStatus"></span>
+    </p>
+  </div>
+
+  <div class="row">
+    <p class="title">写入到配置文件：</p>
+    <input id="writeKey" type="text" style="width: 400px">
+    <button id="writeBtn">写入配置</button>
+    <p>
+      配置文件写入结果：
+      <span id="wirteStatus" class="status"></span>
+    </p>
+  </div>
+
+  <script>
+    // 绑定事件
+    const generate = {
+      logger (dom, info) {
+        dom && (dom.innerHTML = info || '');
+      },
+
+      request ({ url, params, type, dataType }) {
+        type = type || 'GET';
+        dataType = dataType || 'JSON';
+
+        if (!url) {
+          return 'reuest url 不能为空';
+        }
+
+        const httpRequest = new XMLHttpRequest();
+        httpRequest.open(type, url, true);
+        if (dataType == 'JSON') {
+          httpRequest.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+          params = JSON.stringify(params);
+        }
+        httpRequest.send(params);
+
+        return new Promise((resolve, reject) => {
+          httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === 4) {
+              if (httpRequest.status === 200) {
+                const json = httpRequest.responseText; // 获取到json字符串，还需解析
+                resolve(JSON.parse(json));
+              } else {
+                resolve({
+                  code: httpRequest.status,
+                  msg: '网络异常'
+                });
+              }
+            }
+          };
+        });
+      },
+
+      init () {
+        // 绑定 dom
+        this.uploadSelectDom = document.getElementById('uploadSelect');
+        this.uploadBtnDom = document.getElementById('uploadBtn');
+        this.uploadStatusDom = document.getElementById('uploadStatus');
+
+        this.transformKeyDom = document.getElementById('transformKey');
+        this.transformBtnDom = document.getElementById('transformBtn');
+        this.transformStatusDom = document.getElementById('transformStatus');
+
+        this.writeKeyDom = document.getElementById('writeKey');
+        this.writeBtnDom = document.getElementById('writeBtn');
+        this.wirteStatusDom = document.getElementById('wirteStatus');
+        
+        // 绑定事件
+        this.uploadBtnDom.onclick = this.uploadBtnFn.bind(this);
+        this.transformBtnDom.onclick = this.transformBtnFn.bind(this);
+        this.writeBtnDom.onclick = this.writeBtnFn.bind(this);
+      },
+
+      async uploadBtnFn () {
+        // 获取文件配置
+        const files = this.uploadSelectDom.files;
+        
+        if (!files.length) {
+          this.logger(this.uploadStatusDom, '没有选择文件');
+          return
+        }
+
+        // 调用接口请求
+        const fd = new FormData();
+        fd.append('file', files[0]);
+        const data = await this.request({
+          url: '/api/upload',
+          params: fd,
+          type: 'POST',
+          dataType: 'FORMDATA'
+        });
+        
+        // 状态回填
+        let statusText = '';
+        if (data.code == 0) {
+          statusText = `key: ${data.data.key}; tips: ${data.data.tips};`
+
+          // 填充到后面输入框
+          this.transformKeyDom.value = data.data.key;
+        } else {
+          statusText = data.msg;
+        }
+        this.logger(this.uploadStatusDom, statusText);
+      },
+
+      async transformBtnFn () {
+        // 获取 key 值
+        const key = this.transformKeyDom.value;
+
+        if (!key) {
+          this.logger(this.transformStatusDom, '参数为空');
+          return
+        }
+
+        // 调用接口请求
+        const data = await this.request(
+          {
+          url: '/api/generate',
+          params: {
+            "key": key,
+            "replaceRules": [
+              {
+                "prefix": "https://raw.githubusercontent.com/vic-k98/config/main/",
+                "reg": "(.*)vic-k98/config/main/QuantumultX(.*)",
+                "middle": "Clash"
+              },
+              {
+                "prefix": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/",
+                "reg": "(.*)master/rule/QuantumultX(.*)",
+                "middle": "Clash"
+              }
+            ]
+          },
+          type: 'POST'
+        });
+       
+        // 状态回填
+        let statusText = '';
+        if (data.code == 0) {
+          statusText = `key: ${data.data.key};`
+          
+          // 填充到后面输入框
+          this.writeKeyDom.value = data.data.key;
+        } else {
+          statusText = data.msg;
+        }
+        this.logger(this.transformStatusDom, statusText);
+        
+      },
+
+      async writeBtnFn () {
+        // 获取 key 值
+        const key = this.writeKeyDom.value;
+
+        if (!key) {
+          this.logger(this.wirteStatusDom, '参数为空');
+          return
+        }
+
+        // 调用接口
+        const data = await this.request(
+          {
+          url: '/api/clashini',
+          params: {
+            "key": key
+          },
+          type: 'POST'
+        });
+
+        // 状态回填
+        let statusText = '';
+        if (data.code == 0) {
+          statusText = `url: <a href="${data.data.url}" target="_blank">${data.data.url}</a>`
+        } else {
+          statusText = data.msg;
+        }
+        this.logger(this.wirteStatusDom, statusText);
+      },
+
+      start () {
+        this.init();
+      }
+    }
+    generate.start();
+  </script>
+</body>
+</html>
