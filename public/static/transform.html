@@ -33,7 +33,9 @@
     <button id="transformBtn">一键转换</button>
     <p>
       转换状态：
-      <span id="transformStatus"></span>
+      <span id="transformStatus"></span><br/>
+      机场列表：<br/>
+      <span id="transformStatus2"></span>
     </p>
   </div>
 
@@ -96,6 +98,7 @@
         this.transformKeyDom = document.getElementById('transformKey');
         this.transformBtnDom = document.getElementById('transformBtn');
         this.transformStatusDom = document.getElementById('transformStatus');
+        this.transformStatusDom2 = document.getElementById('transformStatus2');
 
         this.writeKeyDom = document.getElementById('writeKey');
         this.writeBtnDom = document.getElementById('writeBtn');
@@ -181,7 +184,16 @@
           statusText = data.msg;
         }
         this.logger(this.transformStatusDom, statusText);
-        
+
+        let listStr = '';
+        if (data.code == 0) {
+          data.data.serverList.forEach(element => {
+            listStr += `${element}<br/>`
+          });
+        } else {
+          statusText = data.msg;
+        }
+        this.logger(this.transformStatusDom2, listStr);
       },
 
       async writeBtnFn () {
