@@ -1,9 +1,10 @@
 const constConf = require('./const');
+const { getEnv } = require('../lib/getEnv');
 
 const G_APP_NAME = constConf.G_APP_NAME;
 
 module.exports = {
-  host: process.env.REDIS_HOST || '127.0.0.1',
+  host: process.env.REDIS_HOST || getEnv('REDIS_HOST') || '127.0.0.1',
   port: 6379,
 
   // 文件上传
